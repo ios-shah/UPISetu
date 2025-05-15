@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>UPISetu Settings</title>
@@ -37,7 +38,7 @@
     }
 
     .sidebar a:hover {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 8px;
       color: white;
       padding-left: 10px;
@@ -52,7 +53,7 @@
     .card {
       border: none;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     @media (max-width: 768px) {
@@ -61,6 +62,7 @@
         height: auto;
         position: relative;
       }
+
       .main {
         margin-left: 0;
       }
@@ -68,9 +70,10 @@
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
 </head>
+
 <body>
-  
-<div id="globalLoading" style="
+
+  <div id="globalLoading" style="
   position: fixed;
   top: 50%;
   left: 50%;
@@ -89,9 +92,9 @@
   color: #333;
   transform: translate(-50%, -50%);
 ">
-  <span id="loadingMessage">⏳ Loading</span>
-</div>
-    <div id="sidebar-container"></div>
+    <span id="loadingMessage">⏳ Loading</span>
+  </div>
+  <div id="sidebar-container"></div>
 
   <div class="main">
     <div class="container">
@@ -110,9 +113,10 @@
           </div>
 
           <div class="mb-3">
-          <label for="deploymentId" class="form-label">Deployment ID (Script URL ID)</label>
-          <input type="password" class="form-control" id="deploymentId" value="AKfycbwn5_LrJ68HBqZOXGxC0NS6LRjZxSNsTEuswCS_vwoyV_PV0S8iWHbb1RHYOiRRqRZz" />
-        </div>
+            <label for="deploymentId" class="form-label">Deployment ID (Script URL ID)</label>
+            <input type="password" class="form-control" id="deploymentId"
+              value="AKfycbwn5_LrJ68HBqZOXGxC0NS6LRjZxSNsTEuswCS_vwoyV_PV0S8iWHbb1RHYOiRRqRZz" />
+          </div>
 
 
           <div class="mb-3">
@@ -121,7 +125,7 @@
           </div>
 
           <button type="submit" class="btn btn-primary">Save Settings</button>
-          <button type="reset" id="logoutButton"  class="btn btn-primary">Logout</button>
+          <button type="reset" id="logoutButton" class="btn btn-primary">Logout</button>
         </form>
 
       </div>
@@ -129,54 +133,62 @@
   </div>
 
   <script>
+
+    function showGlobalLoading(message = "Loading...") {
+      const loader = document.getElementById("globalLoading");
+      loader.style.display = "flex";
+      document.getElementById("loadingMessage").textContent = message;
+    }
+
+    function hideGlobalLoading() {
+      document.getElementById("globalLoading").style.display = "none";
+    }
+
     // Handle logout action
     document.getElementById('logoutButton').addEventListener('click', () => {
       // Clear user session
       localStorage.clear();
       window.location.reload();
       // Redirect to login page
-      window.location.href = 'index.html'; 
+      window.location.href = 'index.html';
     });
 
     const userEmail = localStorage.getItem("upi_user_email");
 
+    showGlobalLoading("🔄 Loading user data...");
+
     fetch(`https://script.google.com/macros/s/AKfycbzSwBM717XOVl5w4C0znCR0FWFrY_DyVYc6FhvoEzaG7JZyRtHuetx2tEIesyNbtfgQ/exec?email=${userEmail}`)
       .then(response => {
-        if (!response.ok) {
-          // If the response isn't OK, throw an error
-          throw new Error('Failed to fetch user data');
-        }
+        if (!response.ok) throw new Error('Failed to fetch user data');
         return response.json();
       })
       .then(data => {
-        console.log(data);
         if (Array.isArray(data) && data.length > 0) {
-          const user = data[0]; // Assuming data is an array and taking the first item
-
-          // Map the fields from the response to your form inputs
+          const user = data[0];
           document.getElementById('upiId').value = user["Default UPI ID"] || '';
           document.getElementById('senderName').value = user["Name"] || '';
           document.getElementById('deploymentId').value = user["Deployment ID (Script URL ID)"] || '';
           document.getElementById('adminEmail').value = user["Email"] || '';
 
-          const newSettings = {
-            upiId: document.getElementById("upiId").value,
-            senderName: document.getElementById("senderName").value,
-            deploymentId: document.getElementById("deploymentId").value,
-            adminEmail: document.getElementById("adminEmail").value,
-          };
-          localStorage.setItem("appSettings", JSON.stringify(newSettings));
+          localStorage.setItem("appSettings", JSON.stringify({
+            upiId: user["Default UPI ID"] || '',
+            senderName: user["Name"] || '',
+            deploymentId: user["Deployment ID (Script URL ID)"] || '',
+            adminEmail: user["Email"] || ''
+          }));
         } else {
-          console.warn("User not found in sheet or data is malformed", data);
+          console.warn("User not found or data malformed", data);
         }
       })
-      .catch(error => {
-        console.error("Error fetching user data:", error);
-      });
+      .catch(error => console.error("Error fetching user data:", error))
+      .finally(() => hideGlobalLoading());
+
 
     // Handle form submission
-    document.getElementById("settingsForm").addEventListener("submit", function(e) {
+    document.getElementById("settingsForm").addEventListener("submit", function (e) {
       e.preventDefault();
+      showGlobalLoading("💾 Saving settings...");
+
       const scriptUrl = "https://script.google.com/macros/s/AKfycbzSwBM717XOVl5w4C0znCR0FWFrY_DyVYc6FhvoEzaG7JZyRtHuetx2tEIesyNbtfgQ/exec";
       const upiId = document.getElementById("upiId").value;
       const senderName = document.getElementById("senderName").value;
@@ -185,7 +197,6 @@
       const userEmail = localStorage.getItem("upi_user_email");
       const userName = localStorage.getItem("upi_user_name");
 
-      // Prepare the data to send
       let loginData = new FormData();
       loginData.append("action", "update");
       loginData.append("email", String(userEmail));
@@ -199,19 +210,21 @@
         method: "POST",
         body: loginData
       })
-      .then(response => response.text())
-      .then(data => {
-        console.log("Server response:", data);
-        const response = JSON.parse(data);
-        if (response.status === "duplicate") {
-          console.warn("User already exists. Skipping add.");
-        } else {
-          console.log("User added to sheet.");
-        }
-      })
+        .then(response => response.text())
+        .then(data => {
+          console.log("Server response:", data);
+          alert("✅ Settings saved successfully!");
+        })
+        .catch(err => {
+          console.error("Save error:", err);
+          alert("❌ Failed to save settings.");
+        })
+        .finally(() => hideGlobalLoading());
     });
+
   </script>
 
   <script src="script.js" defer></script>
 </body>
+
 </html>
