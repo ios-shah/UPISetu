@@ -387,22 +387,20 @@ function renderDashboard(data) {
     tbody.innerHTML = '';
     data.recentTransactions.forEach(txn => {
       tbody.innerHTML += `
-        <tr>
-<td>${new Date(txn.timestamp).toLocaleString('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: true
-})}</td>
-
-
-          <td>${txn.name}</td>
-          <td>₹${txn.amount}</td>
-          <td>${txn.status}</td>
-          <td>${txn.txnId}</td>
-        </tr>`;
+         <tr>
+    <td data-label="Time">${new Date(txn.timestamp).toLocaleString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })}</td>
+    <td data-label="Name">${txn.name}</td>
+    <td data-label="Amount">₹${txn.amount}</td>
+    <td data-label="Status">${txn.status}</td>
+    <td data-label="Txn ID">${txn.txnId}</td>
+  </tr>`;
     });
   
     // Draw the chart

@@ -69,6 +69,45 @@
         margin-left: 0;
       }
     }
+      @media (max-width: 600px) {
+    .stacked-table thead {
+      display: none;
+    }
+
+    .stacked-table, 
+    .stacked-table tbody, 
+    .stacked-table tr, 
+    .stacked-table td {
+      display: block;
+      width: 100%;
+    }
+
+    .stacked-table tr {
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      background: #f9f9f9;
+    }
+
+    .stacked-table td {
+      position: relative;
+      padding-left: 50%;
+      text-align: left;
+      border: none;
+      border-bottom: 1px solid #eee;
+    }
+
+    .stacked-table td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 10px;
+      width: 45%;
+      font-weight: bold;
+      color: #555;
+      white-space: nowrap;
+    }
+  }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <script src="checkLogin.js"></script> 
@@ -160,8 +199,8 @@
 
       <!-- Recent Transactions -->
       <div class="card p-4 mb-4">
-        <h4 class="mb-3">Recent Transactions</h4>
-        <table class="table table-striped mb-0">
+      <h4 class="mb-3">Recent Transactions</h4>
+      <table class="table table-striped mb-0 stacked-table">
           <thead>
             <tr>
               <th>Time</th>

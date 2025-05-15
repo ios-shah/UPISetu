@@ -1,3 +1,139 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Responsive Tables</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-top: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    /* --- Stacked table style --- */
+    table.stacked td {
+      border: 1px solid #ccc;
+    }
+
+    @media (max-width: 600px) {
+      table.stacked thead {
+        display: none;
+      }
+
+      table.stacked, 
+      table.stacked tbody, 
+      table.stacked tr, 
+      table.stacked td {
+        display: block;
+        width: 100%;
+      }
+
+      table.stacked tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        padding: 10px 0;
+        background: #f9f9f9;
+      }
+
+      table.stacked td {
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid #eee;
+      }
+
+      table.stacked td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #555;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Responsive Tables Demo</h1>
+
+  <h2>1. Horizontal Scroll Table</h2>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>City</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Alice</td>
+          <td>25</td>
+          <td>New York</td>
+          <td>alice@example.com</td>
+        </tr>
+        <tr>
+          <td>Bob</td>
+          <td>30</td>
+          <td>Los Angeles</td>
+          <td>bob@example.com</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>2. Stacked Table for Small Screens</h2>
+  <table class="stacked">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Stock</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-label="Product">Laptop</td>
+        <td data-label="Price">$999</td>
+        <td data-label="Stock">In Stock</td>
+      </tr>
+      <tr>
+        <td data-label="Product">Phone</td>
+        <td data-label="Price">$499</td>
+        <td data-label="Stock">Out of Stock</td>
+      </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>
+=======
 <!DOCTYPE html>
 <html>
 <head>
@@ -48,3 +184,4 @@
   </script>
 </body>
 </html>
+>>>>>>> ab1b103a009f0961cb1b23af01f84402260f6127
