@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | UPI Portal</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root {
+      --primary-color: #0d6efd;
+      --bg-color: #ffffff;
+      --text-color: #333;
+      --border-radius: 12px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background: #fff;
+      padding: 40px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: var(--text-color);
+      margin-bottom: 30px;
+    }
+
+    #welcome {
+      font-size: 1.2em;
+      margin-top: 20px;
+      color: var(--primary-color);
+      display: none;
+    }
+
+    #signout {
+      margin-top: 15px;
+      display: none;
+      color: var(--primary-color);
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .g_id_signin {
+      display: inline-block;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+
+.glow-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 36px;
+  letter-spacing: 2px;
+  color: whitesmoke;
+  text-shadow: 0 0 5px #0d6efd, 0 0 10px #0d6efd, 0 0 15px #0a58ca;
+  animation: pulseGlow 2.5s ease-in-out infinite;
+  transition: transform 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.glow-title:hover {
+  transform: scale(1.05);
+}
+
+@keyframes pulseGlow {
+  0% {
+    text-shadow: 0 0 5px #0d6efd, 0 0 10px #0d6efd, 0 0 15px #0a58ca;
+  }
+  50% {
+    text-shadow: 0 0 10px #0d6efd, 0 0 20px #0a58ca, 0 0 30px #0a58ca;
+  }
+  100% {
+    text-shadow: 0 0 5px #0d6efd, 0 0 10px #0d6efd, 0 0 15px #0a58ca;
+  }
+}
+
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="login-container">
+  <h1 class="glow-title">UPISetu</h1>
+
+    <h2>Welcome to UPISetu</h2>
+    <p>Please sign in with your Google account</p>
+
+    <!-- Google Sign-In button -->
+    <div id="g_id_onload" data-client_id="1004997825509-mkqs6sqd5nr56p32km353v5g7ebrl38o.apps.googleusercontent.com"
+      data-callback="handleCredentialResponse" data-auto_prompt="true">
+    </div>
+    <div class="g_id_signin" data-type="standard" id="signinDiv"></div>
+
+    <!-- Welcome message -->
+    <div id="welcome"></div>
+    <div id="signout">Sign out</div>
+  </div>
+
+  <script>
+    const deploymentId = "AKfycbwn5_LrJ68HBqZOXGxC0NS6LRjZxSNsTEuswCS_vwoyV_PV0S8iWHbb1RHYOiRRqRZz";
+
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    function handleCredentialResponse(response) {
+      const data = parseJwt(response.credential);
+      const userName = data.name || data.email;
+      const userEmail = data.email.toLowerCase();
+
+      localStorage.setItem("upi_user_name", userName);
+      localStorage.setItem("upi_user_email", userEmail);
+      localStorage.setItem("upi_deployment_id", deploymentId);
+
+      saveUserDataToSheet(userEmail, userName, deploymentId);
+    }
+
+    function showWelcome(name) {
+      document.getElementById('welcome').textContent = `Hi, ${name}`;
+      document.getElementById('welcome').style.display = 'block';
+      document.getElementById('signinDiv').style.display = 'none';
+      document.getElementById('signout').style.display = 'inline';
+    }
+
+    function saveUserDataToSheet(userEmail, userName, deploymentId) {
+      const scriptUrl = "https://script.google.com/macros/s/AKfycbzSwBM717XOVl5w4C0znCR0FWFrY_DyVYc6FhvoEzaG7JZyRtHuetx2tEIesyNbtfgQ/exec";
+
+      let loginData = new FormData();
+      loginData.append("action", "login");
+      loginData.append("email", String(userEmail));
+      loginData.append("name", String(userName));
+      loginData.append("deploymentid", String(deploymentId));
+      loginData.append("dateAdded", new Date().toISOString());
+
+      fetch(scriptUrl, {
+        method: "POST",
+        body: loginData
+      })
+        .then(response => response.text())
+        .then(data => {
+          console.log("Raw server response:", data);
+          try {
+            const response = JSON.parse(data);
+            if (response.status === "duplicate") {
+              console.warn("User already exists. Skipping add.");
+              window.location.href = "settings.html";
+            } else {
+              console.log("User added to sheet.");
+              window.location.href = "settings.html";
+            }
+          } catch (err) {
+            console.error("Failed to parse response:", err);
+          }
+        });
+    }
+
+    const savedName = localStorage.getItem("upi_user_name");
+    if (savedName) {
+      showWelcome(savedName);
+      window.location.href = "dashboard.html";
+    }
+
+    document.getElementById('signout').addEventListener('click', () => {
+      localStorage.clear();
+      window.location.reload();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>About - UPISetu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .sidebar {
+      height: 100vh;
+      background: #0d6efd;
+      color: white;
+      padding: 20px;
+      position: fixed;
+      width: 250px;
+    }
+
+    .sidebar h4 {
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .sidebar a {
+      color: #cfe2ff;
+      display: block;
+      padding: 10px 0;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: white;
+      padding-left: 10px;
+      transition: 0.3s;
+    }
+
+    .main {
+      margin-left: 270px;
+      padding: 30px;
+    }
+
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .main {
+        margin-left: 0;
+      }
+    }
+  </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <script src="checkLogin.js"></script> 
+
+</head>
+
+<body>
+  <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="container-fluid">
+      <div class="card p-4">
+        <h2 class="mb-3">About UPISetu</h2>
+        <p><strong>UPISetu</strong> is a lightweight and efficient UPI-based payment management dashboard designed for
+          small businesses, individuals, and organizations who want quick control over their transactions without heavy
+          integration requirements.</p>
+
+        <p>This platform allows users to:</p>
+        <ul>
+          <li>Generate custom UPI QR codes and payment links</li>
+          <li>Track and monitor recent and pending payments</li>
+          <li>Analyze earnings over time with simple visual charts</li>
+        </ul>
+
+        <hr>
+        <h4 class="mb-3">Database Table Structure</h4>
+        <p>The following is the structure used in the connected Google Sheet for storing UPI transactions:</p>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead class="table-primary">
+              <tr>
+                <th>Column Name</th>
+                <th>Description</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Timestamp</td>
+                <td>Date and time of transaction creation</td>
+                <td>3/27/2025 18:22:28</td>
+              </tr>
+              <tr>
+                <td>UPI ID</td>
+                <td>Receiver’s UPI ID</td>
+                <td>demo@upi</td>
+              </tr>
+              <tr>
+                <td>Name</td>
+                <td>Payer's name (entered in form)</td>
+                <td>John Doe</td>
+              </tr>
+              <tr>
+                <td>WhatsappNo</td>
+                <td>Payer's WhatsApp number</td>
+                <td>+919876543210</td>
+              </tr>
+              <tr>
+                <td>Amount</td>
+                <td>Amount requested for payment</td>
+                <td>500</td>
+              </tr>
+              <tr>
+                <td>Note</td>
+                <td>Note attached to the payment</td>
+                <td>Test Payment</td>
+              </tr>
+              <tr>
+                <td>TransactionId</td>
+                <td>Unique identifier for the transaction</td>
+                <td>TXN123456</td>
+              </tr>
+              <tr>
+                <td>PaymentLink</td>
+                <td>Generated UPI payment link</td>
+                <td><code>upi://pay?pa=...</code></td>
+              </tr>
+              <tr>
+                <td>QR Code URL</td>
+                <td>URL of generated QR code image</td>
+                <td><code>https://api.qrserver.com/...</code></td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>Current payment status</td>
+                <td>Pending</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <hr class="my-5">
+<h4 class="mb-3">Getting Started Guide</h4>
+
+<p>If you're setting up <strong>UPISetu</strong> for the first time, follow these steps:</p>
+
+<ol>
+  <li><strong>Copy the Google Sheet Template:</strong>
+    <ul>
+      <li>Create a new Google Sheet and set up the columns as shown in the table above (ensure exact column names).</li>
+    </ul>
+  </li>
+
+  <li><strong>Deploy Google Apps Script:</strong>
+    <ul>
+      <li>Go to <a href="https://script.google.com" target="_blank">Google Apps Script</a> and create a new project.</li>
+      <li>Connect it to your Google Sheet.</li>
+      <li>Paste your backend script (for creating QR codes, writing rows, reading data).</li>
+      <li>Deploy as a web app (with permissions set to "Anyone" or "Anyone with link").</li>
+    </ul>
+  </li>
+
+  <li><strong>Paste Deployment ID into Settings Page:</strong>
+    <ul>
+      <li>Copy the web app URL after deployment (e.g., <code>DEPLOYMENT_ID</code>).</li>
+      <li>Open <code>settings.html</code> and paste this URL in the appropriate input field or script section.</li>
+      <li>This allows the frontend to communicate with your backend services.</li>
+    </ul>
+  </li>
+
+  <li><strong>Host Your Frontend:</strong>
+    <ul>
+      <li>Upload the HTML files (index, create, about, etc.) to any static host like GitHub Pages, Vercel, or Netlify.</li>
+    </ul>
+  </li>
+
+  <li><strong>Test Everything:</strong>
+    <ul>
+      <li>Submit a payment request from <code>create.html</code>.</li>
+      <li>Check that the entry is added to your sheet and displayed in <code>transactions.html</code>.</li>
+    </ul>
+  </li>
+</ol>
+<hr>
+
+
+        <h4 class="mt-4">Developer</h4>
+        <p><strong>Aayush Shah</strong></p>
+        <ul>
+          <li>Email: <a href="mailto:aayush@example.com">aayush@example.com</a></li>
+          <li>GitHub: <a href="https://github.com/aayushshah" target="_blank">github.com/aayushshah</a></li>
+          <li>LinkedIn: <a href="https://linkedin.com/in/aayushshah" target="_blank">linkedin.com/in/aayushshah</a></li>
+        </ul>
+
+        <p class="text-muted mt-4">Version 1.0.0 — Built using HTML, Bootstrap 5, Google Apps Script & UPI technology.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+  <script src="script.js" defer></script>
+
+</html>

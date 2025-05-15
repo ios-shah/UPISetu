@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test UPI Form</title>
+</head>
+<body>
+  <button onclick="sendToGoogleSheets()">Send Test</button>
+  <a id="paymentLink" href="#" target="_blank">Link</a>
+
+  <script>
+    // Simulate user email
+    localStorage.setItem("upi_user_email", "testuser@example.com");
+
+    function sendToGoogleSheets() {
+      const url = "https://script.google.com/macros/s/AKfycbwOkd_KUSvXMt6sxXtNRutGELc3MnAQUwV2VAkRP3Ww1-bo3ZpgePQKPTP8xpYijjV8/exec";
+      const userEmail = localStorage.getItem("upi_user_email");
+
+      if (!userEmail) {
+        alert("Email not found.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("action", "create");
+      formData.append("upiID", "test@upi");
+      formData.append("sendername", "Sender Test");
+      formData.append("name", "Recipient Test");
+      formData.append("email", userEmail);
+      formData.append("wano", "1234567890");
+      formData.append("amount", "10");
+      formData.append("note", "Test payment");
+      formData.append("transactionID", "TXN123456");
+
+      fetch(url, {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log("Server responded:", data);
+        if (data.paymentLink) {
+          document.getElementById("paymentLink").href = `/pay.html?id=TXN123456`;
+          document.getElementById("paymentLink").textContent = "Payment Link";
+        }
+      })
+      .catch(err => console.error("Fetch error:", err));
+    }
+  </script>
+</body>
+</html>

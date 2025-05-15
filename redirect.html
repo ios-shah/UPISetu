@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        window.onload = function() {
+            // Get the UPI link from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const upiLink = urlParams.get('upi');
+
+            if (upiLink) {
+                // Redirect to the UPI payment app
+                window.location.href = upiLink;
+            } else {
+                document.getElementById("error").innerText = "Invalid UPI Link!";
+            }
+        };
+    </script>
+</head>
+<body>
+    <h2>Redirecting to Payment...</h2>
+    <p id="error"></p>
+</body>
+</html>
