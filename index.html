@@ -99,6 +99,26 @@
 </head>
 
 <body>
+  <div id="globalLoading" style="
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.85);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #0d6efd;
+  font-weight: bold;
+  flex-direction: column;
+">
+  <div>⏳ Signing in...</div>
+</div>
+
   <div class="login-container">
   <h1 class="glow-title">UPISetu</h1>
 
@@ -117,6 +137,17 @@
   </div>
 
   <script>
+
+    function showGlobalLoading(message = "Loading...") {
+  const loader = document.getElementById("globalLoading");
+  loader.style.display = "flex";
+  loader.querySelector("div").textContent = message;
+}
+
+function hideGlobalLoading() {
+  document.getElementById("globalLoading").style.display = "none";
+}
+
     const deploymentId = "AKfycbwn5_LrJ68HBqZOXGxC0NS6LRjZxSNsTEuswCS_vwoyV_PV0S8iWHbb1RHYOiRRqRZz";
 
     function parseJwt(token) {
@@ -128,17 +159,20 @@
       return JSON.parse(jsonPayload);
     }
 
-    function handleCredentialResponse(response) {
-      const data = parseJwt(response.credential);
-      const userName = data.name || data.email;
-      const userEmail = data.email.toLowerCase();
+function handleCredentialResponse(response) {
+  showGlobalLoading("⏳ Signing in...");
 
-      localStorage.setItem("upi_user_name", userName);
-      localStorage.setItem("upi_user_email", userEmail);
-      localStorage.setItem("upi_deployment_id", deploymentId);
+  const data = parseJwt(response.credential);
+  const userName = data.name || data.email;
+  const userEmail = data.email.toLowerCase();
 
-      saveUserDataToSheet(userEmail, userName, deploymentId);
-    }
+  localStorage.setItem("upi_user_name", userName);
+  localStorage.setItem("upi_user_email", userEmail);
+  localStorage.setItem("upi_deployment_id", deploymentId);
+
+  saveUserDataToSheet(userEmail, userName, deploymentId);
+}
+
 
     function showWelcome(name) {
       document.getElementById('welcome').textContent = `Hi, ${name}`;
