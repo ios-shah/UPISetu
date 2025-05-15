@@ -545,7 +545,6 @@ document.addEventListener("DOMContentLoaded", () => {
             adminEmail: document.getElementById("adminEmail").value,
         };
         localStorage.setItem("appSettings", JSON.stringify(newSettings));
-        alert("Settings saved successfully!");
     });
 });
 
