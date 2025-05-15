@@ -482,30 +482,30 @@ function fetchAndRenderTransactions() {
 
                 tbody.innerHTML += `
   <tr>
-    <td>
-  ${new Date(txn.Timestamp || txn.Time).toLocaleString('en-IN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  }).replace(',', '')}
-</td>
+  <td data-label="Date">
+    ${new Date(txn.Timestamp || txn.Time).toLocaleString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    }).replace(',', '')}
+  </td>
 
-    <td>${txn.Name || '-'}</td>
-    <td>₹${txn.Amount || '0'}</td>
-    <td>+${txn.Whatsappno || '-'}</td>
-    <td class="${statusClass} fw-bold">${status}</td>
-    <td>${txn.TransactionId || txn['Txn ID'] || '-'}</td>
-<td>
-  ${status.toLowerCase() !== 'paid' 
-    ? `<button class="btn btn-success btn-sm" onclick="markAsPaid('${txn.TransactionId || txn['Txn ID']}')">Mark as Paid</button>`
-    : ''
-  }
-</td>
+  <td data-label="Name">${txn.Name || '-'}</td>
+  <td data-label="Amount">₹${txn.Amount || '0'}</td>
+  <td data-label="WhatsApp No">+${txn.Whatsappno || '-'}</td>
+  <td data-label="Status" class="${statusClass} fw-bold">${status}</td>
+  <td data-label="Txn ID">${txn.TransactionId || txn['Txn ID'] || '-'}</td>
+  <td data-label="">
+    ${status.toLowerCase() !== 'paid' 
+      ? `<button class="btn btn-success btn-sm" onclick="markAsPaid('${txn.TransactionId || txn['Txn ID']}')">Mark as Paid</button>`
+      : ''
+    }
+  </td>
+</tr>
 
-  </tr>
 `;
 
             });
