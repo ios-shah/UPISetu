@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>All Transactions - UPISetu</title>
@@ -35,7 +36,7 @@
     }
 
     .sidebar a:hover {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 8px;
       color: white;
       padding-left: 10px;
@@ -50,13 +51,16 @@
     .card {
       border: none;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
+
     /* Compact table styling */
     .table th,
     .table td {
-      padding: 0.3rem 0.4rem;  /* Reduce space inside cells */
-      font-size: 14px;         /* Reduce font size slightly */
+      padding: 0.3rem 0.4rem;
+      /* Reduce space inside cells */
+      font-size: 14px;
+      /* Reduce font size slightly */
     }
 
     @media (max-width: 768px) {
@@ -65,6 +69,7 @@
         height: auto;
         position: relative;
       }
+
       .main {
         margin-left: 0;
       }
@@ -79,53 +84,54 @@
       border-radius: 5px;
       border: 1px solid #ddd;
     }
+
     @media (max-width: 600px) {
-    .stacked-table thead {
-      display: none;
-    }
+      .stacked-table thead {
+        display: none;
+      }
 
-    .stacked-table,
-    .stacked-table tbody,
-    .stacked-table tr,
-    .stacked-table td {
-      display: block;
-      width: 100%;
-    }
+      .stacked-table,
+      .stacked-table tbody,
+      .stacked-table tr,
+      .stacked-table td {
+        display: block;
+        width: 100%;
+      }
 
-    .stacked-table tr {
-      margin-bottom: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 10px;
-      background: #f9f9f9;
-    }
+      .stacked-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        background: #f9f9f9;
+      }
 
-    .stacked-table td {
-      position: relative;
-      padding-left: 50%;
-      text-align: left;
-      border: none;
-      border-bottom: 1px solid #eee;
-    }
+      .stacked-table td {
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid #eee;
+      }
 
-    .stacked-table td::before {
-      content: attr(data-label);
-      position: absolute;
-      left: 10px;
-      width: 45%;
-      font-weight: bold;
-      color: #555;
-      white-space: nowrap;
+      .stacked-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        font-weight: bold;
+        color: #555;
+        white-space: nowrap;
+      }
     }
-  }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-  <script src="checkLogin.js"></script> 
+  <script src="checkLogin.js"></script>
 
 </head>
 
 <body>
-<div id="globalLoading" style="
+  <div id="globalLoading" style="
   position: fixed;
   top: 50%;
   left: 50%;
@@ -144,11 +150,11 @@
   color: #333;
   transform: translate(-50%, -50%);
 ">
-  <span id="loadingMessage">⏳ Loading</span>
-</div>
+    <span id="loadingMessage">⏳ Loading</span>
+  </div>
 
 
-    <div id="sidebar-container"></div>
+  <div id="sidebar-container"></div>
 
 
   <div class="main">
@@ -157,9 +163,30 @@
 
       <!-- Search Input -->
       <input type="text" id="searchInput" placeholder="Search by Name, Amount, Txn ID..." onkeyup="filterTable()">
+      <div class="row g-2 mb-3">
+        <div class="col-md-3">
+          <input type="date" class="form-control" id="filterDate" onchange="filterTable()">
+        </div>
+        <div class="col-md-2">
+          <select class="form-control" id="filterStatus" onchange="filterTable()">
+            <option value="">All Statuses</option>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <input type="number" class="form-control" id="minAmount" placeholder="Min ₹" onchange="filterTable()">
+        </div>
+        <div class="col-md-2">
+          <input type="number" class="form-control" id="maxAmount" placeholder="Max ₹" onchange="filterTable()">
+        </div>
+      </div>
+      <div class="text-end mb-3">
+        <button class="btn btn-outline-secondary btn-sm" onclick="clearFilters()">Reset Filters</button>
+      </div>
 
       <div class="card p-4">
-      <table class="table table-striped mb-0 stacked-table">
+        <table class="table table-striped mb-0 stacked-table">
           <thead>
             <tr>
               <th>Date</th>
@@ -172,7 +199,9 @@
             </tr>
           </thead>
           <tbody id="txnTableBody">
-            <tr><td colspan="7" class="text-center text-muted">Loading...</td></tr>
+            <tr>
+              <td colspan="7" class="text-center text-muted">Loading...</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -184,28 +213,54 @@
   <script>
     // Function to filter the table based on the search input
     function filterTable() {
-      const input = document.getElementById('searchInput');
-      const filter = input.value.toLowerCase();
-      const table = document.getElementById('txnTableBody');
-      const rows = table.getElementsByTagName('tr');
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      const filterDate = document.getElementById('filterDate').value;
+      const filterStatus = document.getElementById('filterStatus').value.toLowerCase();
+      const minAmount = parseFloat(document.getElementById('minAmount').value) || 0;
+      const maxAmount = parseFloat(document.getElementById('maxAmount').value) || Infinity;
 
-      for (let i = 0; i < rows.length; i++) {
-        const cells = rows[i].getElementsByTagName('td');
-        let rowContainsSearch = false;
+      const rows = document.querySelectorAll("#txnTableBody tr");
 
-        for (let j = 0; j < cells.length; j++) {
-          if (cells[j]) {
-            const cellText = cells[j].textContent || cells[j].innerText;
-            if (cellText.toLowerCase().includes(filter)) {
-              rowContainsSearch = true;
-              break; // No need to check further columns if found
-            }
-          }
-        }
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        if (cells.length < 6) return; // Skip rows without data
 
-        rows[i].style.display = rowContainsSearch ? "" : "none";
-      }
+        const date = cells[0].innerText.trim();
+        const name = cells[1].innerText.toLowerCase();
+        const amountText = cells[2].innerText.replace(/[₹,]/g, '');
+        const amount = parseFloat(amountText) || 0;
+        const status = cells[4].innerText.toLowerCase();
+        const txnId = cells[5].innerText.toLowerCase();
+
+        const matchesSearch = (
+          name.includes(searchInput) ||
+          cells[3].innerText.toLowerCase().includes(searchInput) || // WhatsApp No
+          txnId.includes(searchInput) ||
+          amountText.includes(searchInput)
+        );
+
+        const dateObj = new Date(date.replace('at', ''));
+        const rowDate = dateObj.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+        const matchesDate = !filterDate || rowDate === filterDate;
+        const matchesStatus = !filterStatus || status === filterStatus;
+        const matchesAmount = amount >= minAmount && amount <= maxAmount;
+
+        const show = matchesSearch && matchesDate && matchesStatus && matchesAmount;
+
+        row.style.display = show ? "" : "none";
+      });
     }
+    function clearFilters() {
+      document.getElementById('filterDate').value = '';
+      document.getElementById('filterStatus').value = '';
+      document.getElementById('minAmount').value = '';
+      document.getElementById('maxAmount').value = '';
+      document.getElementById('searchInput').value = '';
+      filterTable();
+    }
+
+
   </script>
 </body>
+
 </html>
