@@ -119,7 +119,7 @@ Scan the attached QR code 📷 *or* use the UPI ID 👉 *${data.upiID}* to compl
                 const qrcode = data.qrCodeUrl;
                 const isMobile = isMobileDevice();
 
-                const serverURL = isMobile ? "http://192.168.2.17:5000/send-whatsapp" : "http://localhost:5000/send-whatsapp";
+                const serverURL = isMobile ? "https://whatsapp-web-bot-production.up.railway.app/send-whatsapp" : "https://whatsapp-web-bot-production.up.railway.app/send-whatsapp";
 
                 fetch(serverURL, {
                     method: "POST",
