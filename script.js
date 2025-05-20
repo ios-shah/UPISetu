@@ -104,7 +104,7 @@ function sendMessage() {
 • *Amount:* ₹${data.amount}
 • *Note:* ${data.note}
 • *Transaction ID:* ${transactionID}
-
+• *Payment Link:* https://upi-setu.vercel.app/pay.html?${transactionID}
 💳 *Payment Instructions:*
 Scan the attached QR code 📷 *or* use the UPI ID 👉 *${data.upiID}* to complete your payment.
 
