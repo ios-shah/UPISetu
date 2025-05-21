@@ -79,6 +79,7 @@ function isMobileDevice() {
 
 
 function sendMessage() {
+    showGlobalLoading("⏳Sending message...");
     fetch(`https://script.google.com/macros/s/${deploymentID}/exec?q=${transactionID}`)
         .then(response => response.json())
         .then(data => {
@@ -128,7 +129,10 @@ Scan the attached QR code 📷 *or* use the UPI ID 👉 *${data.upiID}* to compl
                 })
                     .then(response => response.json())
                     .then(serverData => {
-                        alert(serverData.message);  // only message is returned
+                        showGlobalLoading("✅ Message Sent");
+                        setTimeout(() => {
+                            hideGlobalLoading();
+                        }, 2000); // hide after 2 seconds
                     })
                     .catch(error => console.error("Error sending WhatsApp message:", error));
             } else {
@@ -138,6 +142,72 @@ Scan the attached QR code 📷 *or* use the UPI ID 👉 *${data.upiID}* to compl
         .catch(error => console.error("Error fetching UPI data:", error));
 }
 
+function sendReminder(txnid) {
+    showGlobalLoading("⏳Sending reminder...");
+
+    fetch(`https://script.google.com/macros/s/${deploymentID}/exec?q=${txnid}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Inspect the response
+
+            if (data.status === "success") {
+                const phone = data.wano;
+
+                const message = `🔔 *Payment Reminder* 🔔
+
+Hi ${data.name},
+
+This is a kind reminder regarding your pending payment.
+
+🧾 *Payment Details:*
+• *Amount:* ₹${data.amount}
+• *Note:* ${data.note}
+• *Transaction ID:* ${txnid}
+• *Payment Link:* https://upi-setu.vercel.app/pay.html?id=${txnid}
+
+💳 *To Pay:*
+Scan the QR code or use the UPI ID 👉 *${data.upiID}*
+
+We kindly request you to complete the payment at your earliest convenience.
+
+🙏 Thank you!`;
+
+                const amount = data.amount;
+                const qrcode = data.qrCodeUrl;
+                const isMobile = isMobileDevice();
+
+                const serverURL = isMobile
+                    ? "https://whatsapp-web-bot-production.up.railway.app/send-whatsapp"
+                    : "https://whatsapp-web-bot-production.up.railway.app/send-whatsapp";
+
+                fetch(serverURL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ phone: phone, message: message, amount: amount, qrcode: qrcode })
+                })
+                    .then(response => response.json())
+                    .then(serverData => {
+                        showGlobalLoading("✅ Reminder Sent");
+                        setTimeout(() => {
+                            hideGlobalLoading();
+                        }, 2000); // hide after 2 seconds
+                    })
+                    .catch(error => {
+                        hideGlobalLoading();
+                        console.error("Error sending WhatsApp message:", error);
+                        alert("❌ Failed to send WhatsApp message.");
+                    });
+            } else {
+                hideGlobalLoading();
+                alert("❌ Failed to fetch data from Google Apps Script.");
+            }
+        })
+        .catch(error => {
+            hideGlobalLoading();
+            console.error("Error fetching UPI data:", error);
+            alert("❌ An error occurred while fetching UPI data.");
+        });
+}
 
 
 
@@ -427,6 +497,12 @@ function fetchAndRenderTransactions() {
   <td data-label="">
     ${status.toLowerCase() !== 'paid' 
       ? `<button class="btn btn-success btn-sm" onclick="markAsPaid('${txn.TransactionId || txn['Txn ID']}')">Mark as Paid</button>`
+      : ''
+    }
+  </td>
+  <td data-label="">
+    ${status.toLowerCase() !== 'paid' 
+      ? `<button class="btn btn-success btn-sm" onclick="sendReminder('${txn.TransactionId || txn['Txn ID']}')">Send Reminder</button>`
       : ''
     }
   </td>
